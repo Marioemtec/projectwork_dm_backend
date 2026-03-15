@@ -26,6 +26,7 @@ ClinicaPlus è un'applicazione full-stack API-based sviluppata per un'organizzaz
 - **Documentazione API**: OpenAPI 3.0 (Swagger)
 
 ### Frontend
+Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 
 ### Database
 - PostgreSQL 15 (via Docker) per i test in locale e via Supabase per la produzione.
