@@ -248,7 +248,7 @@ cd projectwork_dm_backend
 ### Account Test e usabili in produzione(Sito live)
 
 **Paziente:**
-- Email: `patient1@clinicaplus.com`
+- Email: `paziente1@clinicaplus.com`
 - Password: `Password123!`
 
 **Medico:**
