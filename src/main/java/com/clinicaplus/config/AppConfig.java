@@ -2,6 +2,7 @@ package com.clinicaplus.config;
 
 import com.clinicaplus.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,11 +17,16 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class AppConfig {
+
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://projectwork-dm-frontend-1.onrender.com}")
+    private String corsAllowedOrigins;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,7 +41,12 @@ public class AppConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        List<String> allowedOrigins = Arrays.stream(corsAllowedOrigins.split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isEmpty())
+            .collect(Collectors.toList());
+
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setMaxAge(3600L);
