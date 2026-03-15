@@ -61,7 +61,9 @@ public class MedicalServiceService {
         service.setName(serviceDTO.getName());
         service.setDescription(serviceDTO.getDescription());
         service.setPrice(serviceDTO.getPrice());
-        service.setActive(serviceDTO.getActive());
+                if (serviceDTO.getActive() != null) {
+                        service.setActive(serviceDTO.getActive());
+                }
 
         MedicalService updatedService = medicalServiceRepository.save(service);
         return mapToDTO(updatedService);
