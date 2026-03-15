@@ -1,7 +1,6 @@
 package com.clinicaplus.config;
 
 import com.clinicaplus.security.JwtAuthenticationFilter;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class AppConfig {
 
     @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://projectwork-dm-frontend-1.onrender.com}")
