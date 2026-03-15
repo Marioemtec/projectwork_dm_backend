@@ -36,8 +36,8 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 - PostgreSQL 15 (via Docker) per i test in locale e via Supabase per la produzione.
 
 ### Documentazione API
-- **Backend**: http://localhost:8080/api
-- **Swagger API Docs**: http://localhost:8080/api/swagger-ui.html
+- **Backend**: http://localhost:8080/api o in produzione https://projectwork-dm-backend.onrender.com/api
+- **Swagger API Docs**: http://localhost:8080/api/swagger-ui.html o in produzione https://projectwork-dm-backend.onrender.com/api/swagger-ui.html
 
 ## Modello Dati (ER Diagram)
 
@@ -245,15 +245,15 @@ cd projectwork_dm_backend
 
 ## Test Funzionale
 
-### Account Test
+### Account Test e usabili in produzione(Sito live)
 
 **Paziente:**
 - Email: `patient1@clinicaplus.com`
-- Password: `password123`
+- Password: `Password123`
 
 **Medico:**
-- Email: `doctor1@clinicaplus.com`
-- Password: `password123`
+- Email: `dottore.giovanni@clinicaplus.com`
+- Password: `Password123`
 
 ### Limitazioni Attuali
 - Token refresh non implementato
