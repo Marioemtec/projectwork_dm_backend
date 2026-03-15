@@ -249,11 +249,11 @@ cd projectwork_dm_backend
 
 **Paziente:**
 - Email: `patient1@clinicaplus.com`
-- Password: `Password123`
+- Password: `Password123!`
 
 **Medico:**
 - Email: `dottore.giovanni@clinicaplus.com`
-- Password: `Password123`
+- Password: `Password123!`
 
 ### Limitazioni Attuali
 - Token refresh non implementato
