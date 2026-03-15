@@ -149,6 +149,16 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 ## Relazioni DB
 ![supabase schema.png](img/supabase%20schema.png)
 
+## Design Patterns Utilizzati
+
+### Backend
+- **MVC (Model-View-Controller)**: Separazione tra controller, service e repository
+- **Dependency Injection**: Utilizzato da Spring framework
+- **Repository Pattern**: Data access layer
+- **DTO Pattern**: Trasferimento dati tra layer
+- **JWT Token Pattern**: Autenticazione stateless
+- **Exception Handling**: Gestione globale delle eccezioni
+
 ## Snippet Interessanti
 
 ### 1. JWT Token Generation 

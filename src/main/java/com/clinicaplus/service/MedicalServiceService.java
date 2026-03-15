@@ -37,13 +37,11 @@ public class MedicalServiceService {
     }
 
     public List<MedicalServiceDTO> getServicesByDoctor(Long doctorIdOrUserId) {
-        // Try to find doctor by userId first (doctor loading own services)
-        // Then try by doctor.id (patient selecting doctor from dropdown)
-        Doctor doctor = doctorRepository.findByUserId(doctorIdOrUserId)
-                .orElseGet(() -> doctorRepository.findById(doctorIdOrUserId)
+        Doctor doctor = doctorRepository.findById(doctorIdOrUserId)
+                .orElseGet(() -> doctorRepository.findByUserId(doctorIdOrUserId)
                         .orElseThrow(() -> new ResourceNotFoundException(
                                 "Doctor not found with id or userId: " + doctorIdOrUserId)));
-        
+
         return medicalServiceRepository.findByDoctorIdAndActiveTrue(doctor.getId())
                 .stream()
                 .map(this::mapToDTO)
