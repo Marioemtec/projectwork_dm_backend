@@ -31,6 +31,10 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 ### Database
 - PostgreSQL 15 (via Docker) per i test in locale e via Supabase per la produzione.
 
+### Documentazione API
+- **Backend**: http://localhost:8080/api
+- **Swagger API Docs**: http://localhost:8080/api/swagger-ui.html
+
 ## Modello Dati (ER Diagram)
 
 ```
@@ -236,3 +240,8 @@ cd projectwork_dm_backend
 **Medico:**
 - Email: `doctor1@clinicaplus.com`
 - Password: `password123`
+
+### Limitazioni Attuali
+- Token refresh non implementato
+- Gestione email non implementata
+- Notifiche real-time non implementate
