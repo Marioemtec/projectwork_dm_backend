@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 public class AppConfig {
 
-    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://projectwork-dm-frontend-1.onrender.com}")
+    @Value("${CORS_ALLOWED_ORIGINS}")
     private String corsAllowedOrigins;
 
     @Bean
