@@ -143,9 +143,7 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
             └────────────────┘
 ```
 ## Relazioni DB
-
-![DataBase relazioni](img\supabase schema.png)
-
+![supabase schema.png](img/supabase%20schema.png)
 
 ## Snippet Interessanti
 
