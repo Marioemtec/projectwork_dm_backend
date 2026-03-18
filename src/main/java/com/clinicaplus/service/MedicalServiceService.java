@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 public class MedicalServiceService {
 
         private static final Set<String> ALLOWED_LOCATIONS = Set.of(
-                        "Sede Centro",
-                        "Sede Nord",
-                        "Sede Sud"
+                        "Sede Milano, Via Roma 1",
+                        "Sede Monza, Via Milano 2",
+                        "Sede Milano, Via Torino 3"
         );
 
         private static final LocalTime WORKDAY_START = LocalTime.of(9, 0);
