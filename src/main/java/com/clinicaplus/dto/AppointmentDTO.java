@@ -25,6 +25,7 @@ public class AppointmentDTO {
     private LocalDateTime appointmentDateTime;
     private Integer durationMinutes;
     private String status;
+    private String location;
     private String notes;
     private LocalDateTime createdAt;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +21,6 @@ public class MedicalServiceDTO {
     private BigDecimal price;
     private Integer durationMinutes;
     private Boolean active;
+    private List<String> locations;
+    private List<MedicalServiceAvailabilityDTO> availabilities;
 }
