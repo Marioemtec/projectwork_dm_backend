@@ -28,13 +28,16 @@ public class AppointmentController {
         Long doctorId = Long.parseLong(request.get("doctorId").toString());
         LocalDateTime appointmentDateTime = LocalDateTime.parse(request.get("appointmentDateTime").toString());
         Integer durationMinutes = Integer.parseInt(request.get("durationMinutes").toString());
+        String location = request.containsKey("location") && request.get("location") != null
+            ? request.get("location").toString()
+            : null;
         
         Long serviceId = null;
         if (request.containsKey("serviceId") && request.get("serviceId") != null) {
             serviceId = Long.parseLong(request.get("serviceId").toString());
         }
 
-        AppointmentDTO appointment = appointmentService.createAppointment(patientId, doctorId, serviceId, appointmentDateTime, durationMinutes);
+        AppointmentDTO appointment = appointmentService.createAppointment(patientId, doctorId, serviceId, location, appointmentDateTime, durationMinutes);
         return new ResponseEntity<>(appointment, HttpStatus.CREATED);
     }
 

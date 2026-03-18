@@ -32,6 +32,10 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "service_id", nullable = true)
     private MedicalService service;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "institute_id", nullable = false)
+    private Institute institute;
     
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MedicalReport> medicalReports;
@@ -48,6 +52,9 @@ public class Appointment {
     
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @Column(length = 120)
+    private String location;
     
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
