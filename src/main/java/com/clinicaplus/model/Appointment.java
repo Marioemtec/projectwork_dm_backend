@@ -34,7 +34,7 @@ public class Appointment {
     private MedicalService service;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "institute_id", nullable = false)
+    @JoinColumn(name = "institute_id")
     private Institute institute;
     
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
