@@ -5,10 +5,13 @@ import com.clinicaplus.exception.ResourceNotFoundException;
 import com.clinicaplus.model.Appointment;
 import com.clinicaplus.model.AppointmentStatus;
 import com.clinicaplus.model.Doctor;
+import com.clinicaplus.model.Institute;
 import com.clinicaplus.model.Patient;
 import com.clinicaplus.model.MedicalService;
+import com.clinicaplus.model.MedicalServiceAvailability;
 import com.clinicaplus.repository.AppointmentRepository;
 import com.clinicaplus.repository.DoctorRepository;
+import com.clinicaplus.repository.InstituteRepository;
 import com.clinicaplus.repository.PatientRepository;
 import com.clinicaplus.repository.MedicalServiceRepository;
 import lombok.AllArgsConstructor;
@@ -31,8 +34,9 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final MedicalServiceRepository medicalServiceRepository;
+        private final InstituteRepository instituteRepository;
 
-    public AppointmentDTO createAppointment(Long patientId, Long doctorId, Long serviceId, LocalDateTime appointmentDateTime, Integer durationMinutes) {
+        public AppointmentDTO createAppointment(Long patientId, Long doctorId, Long serviceId, String location, LocalDateTime appointmentDateTime, Integer durationMinutes) {
         Patient patient = patientRepository.findByUserId(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with user id: " + patientId));
 
@@ -46,12 +50,16 @@ public class AppointmentService {
         }
 
         Integer effectiveDuration = service != null ? service.getDurationMinutes() : durationMinutes;
+        String normalizedLocation = validateAndResolveLocation(service, location, appointmentDateTime, effectiveDuration);
+        Institute institute = resolveInstituteForAppointment(service, normalizedLocation);
         validateAppointmentConstraints(doctor.getId(), appointmentDateTime, effectiveDuration, null);
 
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
                 .service(service)
+                .institute(institute)
+                .location(normalizedLocation)
                 .appointmentDateTime(appointmentDateTime)
                 .durationMinutes(effectiveDuration)
                 .status(AppointmentStatus.SCHEDULED)
@@ -177,6 +185,7 @@ public class AppointmentService {
                 .appointmentDateTime(appointment.getAppointmentDateTime())
                 .durationMinutes(appointment.getDurationMinutes())
                 .status(appointment.getStatus().name())
+                .location(appointment.getLocation())
                 .notes(appointment.getNotes())
                 .createdAt(appointment.getCreatedAt());
         
@@ -188,4 +197,58 @@ public class AppointmentService {
         
         return builder.build();
     }
+
+        private String validateAndResolveLocation(MedicalService service, String location, LocalDateTime appointmentDateTime, Integer durationMinutes) {
+                if (service == null) {
+                        return null;
+                }
+
+                if (location == null || location.isBlank()) {
+                        throw new IllegalArgumentException("Location is required when booking a service.");
+                }
+
+                String normalizedLocation = location.trim();
+                DayOfWeek bookingDay = appointmentDateTime.getDayOfWeek();
+                LocalTime bookingStart = appointmentDateTime.toLocalTime();
+                LocalTime bookingEnd = bookingStart.plusMinutes(durationMinutes);
+
+                List<MedicalServiceAvailability> matchingAvailabilities = service.getAvailabilities()
+                                .stream()
+                                .filter(availability -> availability.getLocation().equalsIgnoreCase(normalizedLocation))
+                                .filter(availability -> availability.getDayOfWeek() == bookingDay)
+                                .toList();
+
+                if (matchingAvailabilities.isEmpty()) {
+                        throw new IllegalArgumentException("Selected location is not available for this service on the selected day.");
+                }
+
+                boolean insideWindow = matchingAvailabilities.stream()
+                                .anyMatch(availability -> !bookingStart.isBefore(availability.getStartTime()) && !bookingEnd.isAfter(availability.getEndTime()));
+
+                if (!insideWindow) {
+                        throw new IllegalArgumentException("Selected time is outside the service availability window for this location.");
+                }
+
+                return matchingAvailabilities.get(0).getLocation();
+        }
+
+        private Institute resolveInstituteForAppointment(MedicalService service, String normalizedLocation) {
+                if (service != null && service.getInstitute() != null) {
+                        return service.getInstitute();
+                }
+
+                String preferredInstituteName = (normalizedLocation != null && !normalizedLocation.isBlank())
+                                ? normalizedLocation.trim()
+                                : "Sede Centro";
+
+                return instituteRepository.findByName(preferredInstituteName)
+                                .or(() -> instituteRepository.findFirstByActiveTrueOrderByIdAsc())
+                                .orElseGet(() -> instituteRepository.save(Institute.builder()
+                                                .name(preferredInstituteName)
+                                                .city("N/D")
+                                                .address(preferredInstituteName)
+                                                .active(true)
+                                                .description("Sede creata automaticamente per compatibilita con il vincolo institute_id sugli appuntamenti.")
+                                                .build()));
+        }
 }
