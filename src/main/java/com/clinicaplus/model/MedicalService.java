@@ -28,7 +28,7 @@ public class MedicalService {
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "institute_id", nullable = false)
+    @JoinColumn(name = "institute_id")
     private Institute institute;
 
     @Column(nullable = false)
