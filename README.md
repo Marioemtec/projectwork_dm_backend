@@ -233,6 +233,11 @@ public String generateToken(String email, String role) {
 }
 ```
 
+**Considerazioni :**
+- Mostra come viene costruita l'autenticazione stateless tramite JWT.
+- Evidenzia l'uso dei claim (es. `role`) per portare nel token informazioni utili all'autorizzazione.
+- E un punto critico di sicurezza: da qui dipende la corretta identificazione dell'utente su ogni chiamata API.
+
 ### 2. Authentication Filter 
 ```java
 public JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -247,6 +252,11 @@ public JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 ```
+
+**Considerazioni :**
+- Rappresenta il punto in cui ogni request viene controllata prima di arrivare ai controller.
+- Fa vedere il flusso completo: estrazione token, validazione, recupero identita.
+- Collega sicurezza e logica applicativa: se questo passaggio e robusto, tutte le endpoint protette ereditano protezione coerente.
 
 ### 3. Appointment Service
 ```java
@@ -269,6 +279,40 @@ public AppointmentDTO createAppointment(Long patientId, Long doctorId,
     return mapToDTO(appointmentRepository.save(appointment));
 }
 ```
+
+**Considerazioni :**
+- E un ottimo esempio del pattern service: validazione input, accesso repository, costruzione entita, mapping DTO.
+- Mostra come viene centralizzata la business logic della prenotazione in un unico punto.
+- E il cuore funzionale dell'app: la prenotazione e il caso d'uso principale lato paziente/medico.
+
+### 4. Institute Resolution Pattern 
+```java
+private Institute resolveInstituteForAppointment(MedicalService service, String normalizedLocation) {
+    if (service != null && service.getInstitute() != null) {
+        return service.getInstitute();
+    }
+    
+    String preferredInstituteName = (normalizedLocation != null && !normalizedLocation.isBlank())
+        ? normalizedLocation.trim()
+        : "Sede Centro";
+    
+    return instituteRepository.findByName(preferredInstituteName)
+        .or(() -> instituteRepository.findFirstByActiveTrueOrderByIdAsc())
+        .orElseGet(() -> instituteRepository.save(Institute.builder()
+            .name(preferredInstituteName)
+            .city("N/D")
+            .address(preferredInstituteName)
+            .active(true)
+            .description("Sede creata automaticamente...")
+            .build()));
+}
+```
+
+**Considerazioni :**
+- Dimostra il pattern di fallback a 3 livelli: usare l'istituto del servizio → cercare per nome della location → creare default automatico.
+- Garantisce che ogni appuntamento avra sempre un istituto valido (nessun null), evitando violazioni di vincoli referenziali.
+- Mostra robustezza architetturale: gestisce scenari incomplete (servizio senza istituto, location non trovata) in modo intelligente e riepibile.
+- E critico per un'app multi-sede: assicura che tutti i dati rimangono consistenti anche in caso di configurazioni incomplete.
 
 ## Guida all'Installazione
 
