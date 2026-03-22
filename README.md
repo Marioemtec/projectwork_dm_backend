@@ -6,7 +6,7 @@ ClinicaPlus è un'applicazione full-stack API-based sviluppata per un'organizzaz
 
 SITO WEB IN PRODUZIONE --> https://projectwork-dm-frontend-1.onrender.com
 
-N.B. Puo' richiedere fino a 50 sec di caricamento in caso di servizi in stadby dato che viene utilizzata la versione free di hosting
+N.B. Puo' richiedere fino a 50 sec di caricamento in caso di servizi in stadby dato che viene utilizzata la versione free di host del servizio backend.
 
 ### Caratteristiche Principali
 - Autenticazione e registrazione utenti (pazienti e medici)
