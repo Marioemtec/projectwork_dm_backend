@@ -39,6 +39,12 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 - **Backend**: http://localhost:8080/api o in produzione https://projectwork-dm-backend.onrender.com/api
 - **Swagger API Docs**: http://localhost:8080/api/swagger-ui.html o in produzione https://projectwork-dm-backend.onrender.com/api/swagger-ui.html
 
+### Profili applicazione Spring:
+[Profilo locale](src/main/resources/application-local.yml)
+
+[Profilo produzione](src/main/resources/application-prod.yml)
+
+
 ## Modello Dati (ER Diagram)
 
 ```
@@ -324,6 +330,7 @@ private Institute resolveInstituteForAppointment(MedicalService service, String 
 
 ### Passo 1: Avviare il Database
 
+Partendo dalla root di progetto, spostarsi all'interno della folder database-docker/docker-compose.yml ed esguire il comando
 ```bash
 cd PW
 docker-compose up -d
@@ -335,7 +342,7 @@ docker ps
 ```
 
 ### Passo 2: Build e Avvio Backend
-
+Ritornando nelal root di progetto dove è presente il wrapper di gradle:
 ```bash
 cd projectwork_dm_backend
 
@@ -343,7 +350,7 @@ cd projectwork_dm_backend
 ./gradlew build
 
 # Avviare l'applicazione
-./gradlew bootRun
+./gradlew bootRun -Dspring.profiles.active=local
 ```
 
 ## Test Funzionale
