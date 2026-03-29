@@ -4,9 +4,9 @@
 
 ClinicaPlus è un'applicazione full-stack API-based sviluppata per un'organizzazione del settore sanitario (clinica privata multi-specialistica). L'applicazione fornisce un completo sistema di prenotazione visite mediche e gestione referti medici.
 
-SITO WEB DEL PROGETTO IN PRODUZIONE --> https://projectwork-dm-frontend-1.onrender.com
+**SITO WEB DEL PROGETTO IN PRODUZIONE** --> https://projectwork-dm-frontend-1.onrender.com
 
-DEMO DEL PROGETTO VIDEO --> https://youtu.be/TBockHQ5K6o
+**DEMO DEL PROGETTO VIDEO** --> https://youtu.be/TBockHQ5K6o
 
 N.B. Puo' richiedere fino a 50 sec di caricamento in caso di servizi in stadby dato che viene utilizzata la versione free di host del servizio backend.
 
