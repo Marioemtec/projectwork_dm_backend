@@ -363,8 +363,12 @@ cd projectwork_dm_backend
 - Email: `paziente1@clinicaplus.com`
 - Password: `Password123!`
 
-**Medico:**
+**Medico 1:**
 - Email: `dottore.giovanni@clinicaplus.com`
+- Password: `Password123!`
+
+**Medico 2:**
+- Email: `mario.rossa@clinicaplus.com`
 - Password: `Password123!`
 
 ### Limitazioni Attuali
