@@ -38,7 +38,6 @@ Repo di frontend --> https://github.com/Marioemtec/projectwork_dm_frontend
 - PostgreSQL 15 (via Docker) per i test in locale e via Supabase per la produzione.
 
 ### Documentazione API
-- **Backend**: http://localhost:8080/api o in produzione https://projectwork-dm-backend.onrender.com/api
 - **Swagger API Docs**: http://localhost:8080/api/swagger-ui.html o in produzione https://projectwork-dm-backend.onrender.com/api/swagger-ui.html
 
 ### Profili applicazione Spring:
