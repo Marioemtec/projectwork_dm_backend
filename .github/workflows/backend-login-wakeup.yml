@@ -1,0 +1,85 @@
+name: Backend Login Wakeup
+
+on:
+  schedule:
+    # GitHub cron uses UTC. We trigger at 06:00 and 07:00 UTC, then run only
+    # when local time in Europe/Rome is 08:00 (handles DST automatically).
+    - cron: "0 6 * * *"
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  login-wakeup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Allow run only at 08:00 Italy time
+        if: github.event_name == 'schedule'
+        run: |
+          set -euo pipefail
+          hour_it=$(TZ=Europe/Rome date +"%H")
+          if [ "$hour_it" != "08" ]; then
+            echo "Skipping: current Italy time is ${hour_it}:00"
+            exit 0
+          fi
+
+      - name: Login to backend
+        env:
+          BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
+          LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${LOGIN_EMAIL:-}" ] || [ -z "${LOGIN_PASSWORD:-}" ]; then
+            echo "Missing LOGIN_EMAIL or LOGIN_PASSWORD secret"
+            exit 1
+          fi
+
+          LOGIN_URL="${BACKEND_BASE_URL%/}/auth/login"
+          echo "Calling ${LOGIN_URL}"
+
+          payload=$(printf '{"email":"%s","password":"%s"}' "$LOGIN_EMAIL" "$LOGIN_PASSWORD")
+
+          # Render cold start can take several minutes. Retry for up to ~10 minutes.
+          max_attempts=10
+          sleep_seconds=60
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            echo "Attempt ${attempt}/${max_attempts}"
+
+            status=$(curl -sS -o response.json -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 45 \
+              -X POST "$LOGIN_URL" \
+              -H "Content-Type: application/json" \
+              --data "$payload" || true)
+
+            echo "HTTP status: ${status}"
+
+            if [ "$status" = "200" ]; then
+              if grep -q '"token"' response.json; then
+                echo "Login wakeup OK"
+                exit 0
+              fi
+
+              echo "HTTP 200 but token field missing"
+              cat response.json
+            elif [ "$status" = "401" ] || [ "$status" = "403" ]; then
+              echo "Authentication failed (check LOGIN_EMAIL/LOGIN_PASSWORD secrets)"
+              cat response.json
+              exit 1
+            else
+              echo "Backend not ready yet or temporary error"
+              [ -s response.json ] && cat response.json || true
+            fi
+
+            if [ "$attempt" -lt "$max_attempts" ]; then
+              echo "Waiting ${sleep_seconds}s before retry..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Login wakeup failed after ${max_attempts} attempts (~5 minutes)"
+          exit 1
