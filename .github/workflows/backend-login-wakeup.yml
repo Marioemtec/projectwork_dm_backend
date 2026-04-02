@@ -37,6 +37,11 @@ jobs:
             BACKEND_BASE_URL="https://projectwork-dm-backend.onrender.com/api"
           fi
 
+          # If a Swagger URL is provided by mistake, normalize it to API base URL.
+          BACKEND_BASE_URL="${BACKEND_BASE_URL%/}"
+          BACKEND_BASE_URL="${BACKEND_BASE_URL%/swagger-ui.html}"
+          BACKEND_BASE_URL="${BACKEND_BASE_URL%/swagger-ui}"
+
           if [ -z "${LOGIN_EMAIL:-}" ] || [ -z "${LOGIN_PASSWORD:-}" ]; then
             echo "Missing LOGIN_EMAIL or LOGIN_PASSWORD secret"
             exit 1
@@ -64,20 +69,23 @@ jobs:
             echo "HTTP status: ${status}"
 
             if [ "$status" = "200" ]; then
-              if grep -q '"token"' response.json; then
+              if grep -Eq '"(token|accessToken)"[[:space:]]*:' response.json; then
                 echo "Login wakeup OK"
                 exit 0
               fi
 
-              echo "HTTP 200 but token field missing"
-              cat response.json
+              echo "HTTP 200 but token field missing (response is likely not auth JSON)"
+              head -c 400 response.json || true
+              echo
             elif [ "$status" = "401" ] || [ "$status" = "403" ]; then
               echo "Authentication failed (check LOGIN_EMAIL/LOGIN_PASSWORD secrets)"
-              cat response.json
+              head -c 400 response.json || true
+              echo
               exit 1
             else
               echo "Backend not ready yet or temporary error"
-              [ -s response.json ] && cat response.json || true
+              [ -s response.json ] && head -c 400 response.json || true
+              echo
             fi
 
             if [ "$attempt" -lt "$max_attempts" ]; then
