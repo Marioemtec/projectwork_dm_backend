@@ -10,6 +10,7 @@ on:
 
 jobs:
   login-wakeup:
+    environment: BACKEND_BASE_URL
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -31,6 +32,10 @@ jobs:
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
         run: |
           set -euo pipefail
+
+          if [ -z "${BACKEND_BASE_URL:-}" ]; then
+            BACKEND_BASE_URL="https://projectwork-dm-backend.onrender.com/api"
+          fi
 
           if [ -z "${LOGIN_EMAIL:-}" ] || [ -z "${LOGIN_PASSWORD:-}" ]; then
             echo "Missing LOGIN_EMAIL or LOGIN_PASSWORD secret"
@@ -81,5 +86,5 @@ jobs:
             fi
           done
 
-          echo "Login wakeup failed after ${max_attempts} attempts (~5 minutes)"
+          echo "Login wakeup failed after ${max_attempts} attempts (~10 minutes)"
           exit 1
