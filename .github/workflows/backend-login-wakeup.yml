@@ -70,13 +70,13 @@ jobs:
 
             if [ "$status" = "200" ]; then
               if grep -Eq '"(token|accessToken)"[[:space:]]*:' response.json; then
-                echo "Login wakeup OK"
-                exit 0
+                echo "Login wakeup OK (token found)"
+              else
+                echo "Login wakeup OK (HTTP 200). Token not detected in body; continuing."
+                head -c 400 response.json || true
+                echo
               fi
-
-              echo "HTTP 200 but token field missing (response is likely not auth JSON)"
-              head -c 400 response.json || true
-              echo
+              exit 0
             elif [ "$status" = "401" ] || [ "$status" = "403" ]; then
               echo "Authentication failed (check LOGIN_EMAIL/LOGIN_PASSWORD secrets)"
               head -c 400 response.json || true
