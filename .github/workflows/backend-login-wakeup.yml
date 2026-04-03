@@ -2,8 +2,8 @@ name: Backend Login Wakeup
 
 on:
   schedule:
-    # GitHub cron uses UTC. We trigger at 06:00 and 07:00 UTC, then run only
-    # when local time in Europe/Rome is 08:00 (handles DST automatically).
+    # GitHub cron uses UTC. We trigger at 06:00 and 07:00 UTC, then keep only
+    # the one that maps to 08:00 in Europe/Rome for the current DST offset.
     - cron: "0 6 * * *"
     - cron: "0 7 * * *"
   workflow_dispatch:
@@ -19,9 +19,16 @@ jobs:
         if: github.event_name == 'schedule'
         run: |
           set -euo pipefail
-          hour_it=$(TZ=Europe/Rome date +"%H")
-          if [ "$hour_it" != "08" ]; then
-            echo "Skipping: current Italy time is ${hour_it}:00"
+
+          offset_it=$(TZ=Europe/Rome date +"%z")
+          utc_hour=$(date -u +"%H")
+          expected_utc_hour="07"
+
+          if [ "$offset_it" = "+0200" ]; then
+            expected_utc_hour="06"
+          fi
+
+          if [ "$utc_hour" != "$expected_utc_hour" ]; then
             exit 0
           fi
 
